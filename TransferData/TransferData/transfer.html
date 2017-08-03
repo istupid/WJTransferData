@@ -1,0 +1,92 @@
+<html>
+	<head>
+		<title> Transfer </title>
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<script type="text/javascript">
+			var arr = [
+						'商行||华北||龙华西路店||123213',
+						'商行||华北||龙华北路店',
+						'农行||华东||龙华北路店',
+						'农行||总店'
+						];
+
+			var destArr = new Array(); // 不能定义长度
+			for (var i = 0; i < arr.length; i++) {
+
+				var splitArr = arr[i].split('||');
+				// var j = splitArr.length - 1;
+
+				// var dict = {"title":splitArr[j--], "items":[]};
+				// while(j >= 0) {
+				// 	dict = {"title":splitArr[j--], "items":[dict]};
+				// }
+				var dict = dictWithArray(splitArr, 0);
+
+				if (destArr.length > 0) {
+					var flag = false; // 默认不同
+					for (var k = 0; k < destArr.length; k++) {
+						var dictB = destArr[k];
+						if (dictCompareDict(dict, destArr[k])) {
+							flag = true;
+							break;
+						}
+					}
+
+					if (!flag) {
+						destArr.push(dict);
+					}
+				} else {
+					destArr.push(dict);	// 数组中没有元素
+				}
+			}
+
+			document.write(JSON.stringify(destArr));
+
+			function dictWithArray(arr, i) {
+				var dict;
+				if (arr.length == i) {
+					dict = {"title":arr[i],"items":[]};
+				} else {
+					dict = {"title":arr[i],"items":[dictWithArray(arr, i+1)]};
+				}
+				return dict;
+			}
+
+			function dictCompareDict(dictA, dictB) {
+				if (dictA["title"] == dictB["title"]) {
+					var arrA = dictA["items"];
+					var arrB = dictB["items"];
+
+					if (arrA.length == 0) {
+						return YES;
+					}
+					var destDictA = arrA[0];
+
+					if (arrB.length == 0) {
+						arrB.push(destDictA);
+						return YES;
+					}
+
+					var flag = false; // 默认不相同
+					for (var i = 0; i < arrB.length; i++) {
+						var destDictB = arrB[i];
+						if (dictCompareDict(destDictA,destDictB)) {
+							flag = true;
+							break;
+						}
+					}
+					if (!flag) {
+						arrB.push(destDictA);
+					}
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+		</script>
+	</body>
+</html>
